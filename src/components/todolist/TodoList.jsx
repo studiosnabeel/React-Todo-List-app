@@ -1,146 +1,72 @@
-import { useEffect, useState } from 'react';
-import './TodoList.css';
-import { BiBookAdd } from 'react-icons/Bi';
-import { FiEdit } from 'react-icons/Fi';
-import { MdDelete } from 'react-icons/Md';
+import Todo from '../todo/Todo';
+import TodoForm from '../todoform/TodoForm';
+import './todoList.css';
+import { useState } from 'react';
 
 const TodoList = () => {
-  const [tasks, setTasks] = useState('');
-  const [array, setArray] = useState([]);
-  //create editIndex state to keep track of the index of the item being edited.
-  const [editIndex, setEditIndex] = useState(null);
-  //create edittext state to store the edited value for the item.
-  const [edittext, setEditText] = useState('');
-  // create state to change appearance of checked items
-  const [checkedItems, setCheckedItems] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const storedTodos = localStorage.getItem('todos');
+    return storedTodos ? JSON.parse(storedTodos) : [];
+  });
 
-  // Helper functions
-
-  //change todo list input value
-  const handleChange = (e) => {
-    setTasks(e.target.value);
+  //Function to store data in localstorage
+  const updateLocalStorage = (updatedTodos) => {
+    localStorage.setItem('todos', JSON.stringify(updatedTodos));
   };
 
-  //Add Todo list item
-  const addItem = () => {
-    if (!tasks) {
-      alert('Please add a Task');
-      return;
-    }
-    const item = {
-      id: Math.floor(Math.random() * 10000),
-      value: tasks,
-    };
-    setArray((oldArray) => [...oldArray, item]);
-    setTasks('');
+  // Function to Add Todo item
+  const addTodo = (todo) => {
+    const newTodo = [todo, ...todos];
+    setTodos(newTodo);
+    updateLocalStorage(newTodo);
+  };
+  console.log(...todos);
+
+  //Function to update our todo item
+  const updateTodo = (todoId, newVal) => {
+    setTodos((prev) =>
+      prev.map((item) => (item.id === todoId ? newVal : item))
+    );
+  };
+  updateLocalStorage(todos);
+
+  // Function to Delete Todo item
+  const delTodo = (id) => {
+    const removeArray = [...todos].filter((todo) => todo.id !== id);
+    setTodos(removeArray);
+    updateLocalStorage(removeArray);
   };
 
-  // Delete Todo list item
-  const deleteTask = (id) => {
-    setArray((oldArray) => oldArray.filter((item) => item.id !== id));
-  };
-
-  //Delete all todo items
-  const clearAllItem = () => {
-    setArray([]);
-  };
-
-  //Edit todo item
-  const editItem = (index) => {
-    const itemToEdit = array[index];
-    setEditIndex(index);
-    setEditText(itemToEdit.value);
-  };
-
-  //handle change in edit input
-  const handleEditChange = (e) => {
-    setEditText(e.target.value);
-  };
-
-  //save the edited item and set edit index and edit text states back to default
-  const handleEditSave = (index) => {
-    if (edittext.trim() !== '') {
-      const newArray = [...array];
-      newArray[index].value = edittext;
-      setArray(newArray);
-    }
-    setEditIndex(null);
-    setEditText('');
-  };
-
-  //create a function to toggle class on checked
-  const handleCheckToggle = (index) => {
-    setCheckedItems((prevCheckedItems) => {
-      const newCheckedItems = [...prevCheckedItems];
-      newCheckedItems[index] = !newCheckedItems[index];
-      return newCheckedItems;
+  //Function to check the todo
+  const checkedTodo = (id) => {
+    let updatedTodo = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
     });
+    setTodos(updatedTodo);
+    updateLocalStorage(updatedTodo);
   };
 
-  useEffect(() => {
-    console.log(array);
-  }, [array]);
+  const delAll = () => {
+    setTodos([]);
+    updateLocalStorage([]);
+  };
 
   return (
-    <div className="todo-list">
-      <h1>Todo List</h1>
-      <div className="TodoInput">
-        <input
-          className="addtask"
-          type="text"
-          placeholder="Add Task"
-          value={tasks}
-          onChange={handleChange}
-        />
-        <p onClick={addItem}>
-          <BiBookAdd className="addicon" />
-        </p>
-      </div>
-
-      <ul className="task-ul">
-        {array.map((item, index) => {
-          return (
-            <>
-              <div className="task-container" key={item.id}>
-                {editIndex === index ? (
-                  <input
-                    type="text"
-                    value={edittext}
-                    onChange={handleEditChange}
-                    onBlur={() => handleEditSave(index)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleEditSave(index);
-                      }
-                    }}
-                  />
-                ) : (
-                  <>
-                    <li onClick={()=> handleCheckToggle(index)} className={checkedItems[index] ?'taskLi checked':"taskLi"} key={item.id}>
-                      {item.value}
-                    </li>
-                    <div>
-                      <FiEdit
-                        onClick={() => editItem(index)}
-                        className="icon"
-                      />
-                      <MdDelete
-                        onClick={() => deleteTask(item.id)}
-                        className="icon"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
-          );
-        })}
-      </ul>
-      {array.length >= 1 && (
-        <button onClick={clearAllItem} className="clearAll">
-          Clear All
-        </button>
-      )}
+    <div className="mainContainer">
+      <h1 className="listH1">Todo List</h1>
+      <TodoForm onSubmit={addTodo} />
+      <Todo
+        todos={todos}
+        delTodo={delTodo}
+        updateTodo={updateTodo}
+        checkedTodo={checkedTodo}
+      />
+      <button className="formButton" onClick={delAll}>
+        Delete All
+      </button>
     </div>
   );
 };

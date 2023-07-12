@@ -1,0 +1,37 @@
+.todoContainer {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-weight: 500;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.todoContainer:nth-child(4n + 1) {
+  background: linear-gradient(
+    90deg,
+    rgb(36, 39, 49) 0%,
+    rgb(100, 254, 164) 100%
+  );
+}
+
+.todoContainer:nth-child(4n + 2) {
+  background: linear-gradient(
+    90deg,
+    rgb(29, 30, 21) 0%,
+    rgb(255, 138, 195) 100%
+  );
+}
+
+.todoContainer:nth-child(4n + 3) {
+  background: linear-gradient(90deg, rgb(43, 38, 31) 0%, rgb(109, 223, 255) 100%);
+}
+
+.todoContainer:nth-child(4n + 4) {
+  background: linear-gradient(90deg, rgb(26, 34, 31) 0%, rgb(135, 255, 229) 100%);
+}
+
+.todoContainer.checked {
+  text-decoration: line-through;
+  opacity: 0.4;
+}
