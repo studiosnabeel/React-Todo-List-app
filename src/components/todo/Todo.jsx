@@ -1,6 +1,5 @@
 import './todo.css';
-import { BiEdit } from 'react-icons/Bi';
-import { AiFillDelete } from 'react-icons/Ai';
+import { AiFillDelete, AiFillEdit } from 'react-icons/Ai';
 import TodoForm from '../todoform/TodoForm';
 import { useState } from 'react';
 
@@ -31,7 +30,7 @@ const Todo = ({ todos, delTodo, updateTodo, checkedTodo }) => {
         {todo.text}
       </p>
       <div>
-        <BiEdit
+        <AiFillEdit
           onClick={() => {
             setEdit({ id: todo.id, value: todo.text });
           }}
