@@ -1,5 +1,5 @@
 import './todo.css';
-import { AiFillDelete, AiFillEdit } from 'react-icons/Ai';
+import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import TodoForm from '../todoform/TodoForm';
 import { useState } from 'react';
 
